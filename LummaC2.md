@@ -66,27 +66,32 @@
 |-----------------------------------------------------|--------------------------------------------------------------------------------------------------|
 | Downloaded the payload using mshta, which had overlayed script | T1218.005: System Binary Proxy Execution: Mshta <br> T1027.009: Obfuscated Files or Information: Embedded Payloads |
 | Executed the encrypted payload using powershell.exe | T1059.001: Command and Scripting Interpreter: PowerShell <br> T1027.013: Obfuscated Files or Information: Encrypted/Encoded File |
-| PowerShell downloaded Lumma Stealer and executed   | T1059.001: Command and Scripting Interpreter: PowerShell   
+| PowerShell downloaded Lumma Stealer and executed   | T1059.001: Command and Scripting Interpreter: PowerShell   |
+---
 
-* This next query is looking for a PowerShell script running with some of the indicators previously seen:
+* This next query is looking for a PowerShell script running with some of the indicators previously seen by decoding the previous PowerShell script:
 
-    ```
+    ```sql
     data_stream.dataset: endpoint.events.process and 
         process.name: ("powershell.exe") and 
         process.args : (*System.Net.WebClient* AND *Start-Process*)
     ```
 
+* Potential False Positives:
+  * Could be a legitimate admin script, but should be easy to recognise.
+
+* Now, knowing that the script uses `mshta.exe` to download the Lumma malware, we might also be able to search on this process leading to a file creation:
+
+    ```kql
+
+    ```
 
 process.parentname: mshta.exe and action: created and file.type: PE
 
 
 
-5. Obfuscation Indicators (Event ID: process_start and file_create)
-LummaC2 employs obfuscation to hide its activity.
 
-Fields to Investigate:
-process.name: powershell.exe, cmd.exe, mshta.exe.
-process.args: Look for encoded or obfuscated commands.
+
 file.path: Suspicious executables or scripts in:
 %TEMP%
 %APPDATA%
