@@ -1,4 +1,4 @@
-
+**DRAFT**
 
 ## Detection Story
 1. We use open source threat intel through Elastic that trigger on IP addresses that have been tagged Lumma in various places. These alerts are fairly low fidelity and I wanted a way to incorporate them into some better rules and alerts.
