@@ -35,16 +35,15 @@
 Threat Hunting Rule: The elastic agent queries the registry data available on files on disk, when those are updated isnt entirely clear by MS so this may not be a key indicator quickly.
 The Software\Microsoft\Windows\CurrentVersion\Explorer\RunMRU\MRUList registry key in Windows contains a list of recently executed commands typed into the "Run" dialog box. This key can be valuable for threat hunting as it may reveal attacker activity, such as commands used for lateral movement, privilege escalation, or reconnaissance.
 
+  ```sql
+  data_stream.dataset : endpoint.events.registry AND registry.value: MRUList AND registry.data.strings: *
+  ```
 
-    ```sql
-    data_stream.dataset : endpoint.events.registry AND registry.value: MRUList AND registry.data.strings: *
-    ```
-
-    ```osquery
-    SELECT path, name, data
-    FROM registry
-    WHERE path LIKE 'HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\RunMRU%';
-    ```
+  ```osquery
+  SELECT path, name, data
+  FROM registry
+  WHERE path LIKE 'HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\RunMRU%';
+  ```
 
 
 
