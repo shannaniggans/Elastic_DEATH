@@ -50,6 +50,8 @@ The Software\Microsoft\Windows\CurrentVersion\Explorer\RunMRU\MRUList registry k
 
 * Potential False Positives:
   * Legitimate users might do this, for example, an administrator, but I believe that this activity would be minimal and could be easily identified and exceptions made if indeed it was normal practice in an organisation.
+ 
+#### To do: "if you see hits to the /api?c=1 that indicates the victim has clicked through the intial CF captha box has has likely at this point at least copied the malcious code ready to execute"
 
 ## 2. Execution: PowerShell
 
