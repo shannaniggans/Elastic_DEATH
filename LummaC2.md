@@ -29,12 +29,24 @@
 * A user might be browsing a site and an advertising window pops up asking them to verify their identity. This popup is the fake capture page.
 * The captcha page then asks the users to perform the task for verification.
 * When the run command is used, the registry key is updated to include the command. The below KQL is to look for evidence of "PowerShell" being executed from the Run prompt:
+
+
   
+Threat Hunting Rule: The elastic agent queries the registry data available on files on disk, when those are updated isnt entirely clear by MS so this may not be a key indicator quickly.
+The Software\Microsoft\Windows\CurrentVersion\Explorer\RunMRU\MRUList registry key in Windows contains a list of recently executed commands typed into the "Run" dialog box. This key can be valuable for threat hunting as it may reveal attacker activity, such as commands used for lateral movement, privilege escalation, or reconnaissance.
+
+
     ```sql
-    data_stream.dataset: endpoint.events.registry AND 
-        registry.key: SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\RunMRU\\* AND 
-        registry.value: powershell*
+    data_stream.dataset : endpoint.events.registry AND registry.value: MRUList AND registry.data.strings: *
     ```
+
+    ```osquery
+    SELECT path, name, data
+    FROM registry
+    WHERE path LIKE 'HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\RunMRU%';
+    ```
+
+
 
 * Potential False Positives:
   * Legitimate users might do this, for example, an administrator, but I believe that this activity would be minimal and could be easily identified and exceptions made if indeed it was normal practice in an organisation.
@@ -55,7 +67,7 @@
         process.args : (*-encodedCommand* OR *-ec* OR *-e\ * OR *-enco*) AND 
         process.parent.name: "explorer.exe" 
     ```
-
+ cvb
 * Potential False Positives:
   * Some software use encoded PowerShell to avoid detection by AV, IT tools etc, so its not uncommon to see encoded PowerShell across the network, but the parent process of explorer.exe can help narrow this down.
 
@@ -67,7 +79,6 @@
 | Downloaded the payload using mshta, which had overlayed script | T1218.005: System Binary Proxy Execution: Mshta <br> T1027.009: Obfuscated Files or Information: Embedded Payloads |
 | Executed the encrypted payload using powershell.exe | T1059.001: Command and Scripting Interpreter: PowerShell <br> T1027.013: Obfuscated Files or Information: Encrypted/Encoded File |
 | PowerShell downloaded Lumma Stealer and executed   | T1059.001: Command and Scripting Interpreter: PowerShell   |
----
 
 * This next query is looking for a PowerShell script running with some of the indicators previously seen by decoding the previous PowerShell script:
 
