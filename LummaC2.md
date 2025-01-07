@@ -2,7 +2,7 @@
 
 ## Detection Story
 1. We use open source threat intel through Elastic that trigger on IP addresses that have been tagged Lumma in various places. These alerts are fairly low fidelity and I wanted a way to incorporate them into some better rules and alerts.
-2. Finding ways to alert on some of teh Lumma activity, particularly in the initial access and execution phases will help to limit the impact.
+2. Finding ways to alert on some of the Lumma activity, particularly in the initial access and execution phases will help to limit the impact.
 
 
 ## Research
